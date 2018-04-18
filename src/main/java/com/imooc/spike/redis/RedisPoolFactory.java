@@ -17,22 +17,22 @@ import redis.clients.jedis.JedisPoolConfig;
 @Service
 public class RedisPoolFactory {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+        private final Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private RedisConfig redisConfig;
+        @Autowired
+        private RedisConfig redisConfig;
 
-    @Bean
-    public JedisPool jedisPoolFactory() {
-        log.info("配置redis...");
-        log.info("redisConfig={}", redisConfig);
-        JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxIdle(redisConfig.getPoolMaxIdle());
-        config.setMaxTotal(redisConfig.getPoolMaxTotal());
-        config.setMaxWaitMillis(redisConfig.getPoolMaxWait() * 1000); //millis
-        JedisPool jedisPool = new JedisPool(config,
-                redisConfig.getHost(),
-                redisConfig.getPort());
-        return jedisPool;
-    }
+        @Bean
+        public JedisPool jedisPoolFactory() {
+                log.info("配置redis...");
+                log.info("redisConfig={}", redisConfig);
+                JedisPoolConfig config = new JedisPoolConfig();
+                config.setMaxIdle(redisConfig.getPoolMaxIdle());
+                config.setMaxTotal(redisConfig.getPoolMaxTotal());
+                config.setMaxWaitMillis(redisConfig.getPoolMaxWait() * 1000); //millis
+                JedisPool jedisPool = new JedisPool(config,
+                        redisConfig.getHost(),
+                        redisConfig.getPort());
+                return jedisPool;
+        }
 }

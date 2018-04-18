@@ -21,20 +21,22 @@ import java.util.List;
 @ResponseBody
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = Exception.class)
-    public Result<String> exceptionHnadler(HttpServletRequest request, Exception e) {
-        if(e instanceof GlobalException) {
-            GlobalException ge = (GlobalException) e;
-            return Result.error(ge.getCm());
+        @ExceptionHandler(value = Exception.class)
+        public Result<String> exceptionHnadler(HttpServletRequest request, Exception e) {
+                //将异常信息打印到控制台便于分析错误
+                e.printStackTrace();
+                if (e instanceof GlobalException) {
+                        GlobalException ge = (GlobalException) e;
+                        return Result.error(ge.getCm());
+                }
+                if (e instanceof BindException) {
+                        BindException ex = (BindException) e;
+                        List<ObjectError> errors = ex.getAllErrors();
+                        ObjectError error = errors.get(0);
+                        String msg = error.getDefaultMessage();
+                        return Result.error(CodeMsg.BIND_ERROR.fillArgs(msg));
+                }
+                return Result.error(CodeMsg.SERVER_ERROR);
         }
-        if(e instanceof BindException) {
-            BindException ex = (BindException) e;
-            List<ObjectError> errors = ex.getAllErrors();
-            ObjectError error  = errors.get(0);
-            String msg = error.getDefaultMessage();
-            return Result.error(CodeMsg.BIND_ERROR.fillArgs(msg));
-        }
-        return Result.error(CodeMsg.SERVER_ERROR);
-    }
 
 }

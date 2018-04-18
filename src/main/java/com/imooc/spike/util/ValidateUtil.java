@@ -14,18 +14,18 @@ import java.util.regex.Pattern;
 public class ValidateUtil {
 
 
-    private static final Pattern mobile_pattern = Pattern.compile("1\\d{10}");
+        private static final Pattern mobile_pattern = Pattern.compile("1\\d{10}");
 
-    public static boolean isMobile(String src) {
-        if(StringUtils.isEmpty(src)) {
-            return false;
+        public static boolean isMobile(String src) {
+                if (StringUtils.isEmpty(src)) {
+                        return false;
+                }
+                Matcher m = mobile_pattern.matcher(src);
+                return m.matches();
         }
-        Matcher m = mobile_pattern.matcher(src);
-        return m.matches();
-    }
 
-    public static void main(String[] args) {
-        System.out.println(isMobile("1881136295"));
-    }
+        public static void main(String[] args) {
+                System.out.println(isMobile("1881136295"));
+        }
 
 }

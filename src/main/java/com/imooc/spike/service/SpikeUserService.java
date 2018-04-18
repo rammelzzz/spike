@@ -26,60 +26,61 @@ import javax.servlet.http.HttpServletResponse;
 @Service
 public class SpikeUserService {
 
-    public static final String COOKIE_NAME_TOKEN = "token";
+        public static final String COOKIE_NAME_TOKEN = "token";
 
-    @Autowired
-    private SpikeUserMapper spikeUserMapper;
-    @Autowired
-    private RedisService redisService;
-    public SpikeUser getById(long id) {
-        return spikeUserMapper.getById(id);
-    }
+        @Autowired
+        private SpikeUserMapper spikeUserMapper;
+        @Autowired
+        private RedisService redisService;
 
-    public boolean login(HttpServletResponse response, LoginVo loginVo) {
-        if(loginVo == null) {
-            throw new GlobalException(CodeMsg.SERVER_ERROR);
-        }
-        String inputPass = loginVo.getPassword();
-        String mobile = loginVo.getMobile();
-        //判断手机号是否存在
-        SpikeUser user = getById(Long.valueOf(mobile));
-        if(user == null) {
-            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
-        }
-        //验证密码
-        String dbPass = user.getPassword();
-        String dbSalt = user.getSalt();
-        String calcPass = MD5Util.formPassToDBPass(inputPass, dbSalt);
-        if(!calcPass.equals(dbPass)) {
-            throw new GlobalException(CodeMsg.PASSWORD_ERROR);
+        public SpikeUser getById(long id) {
+                return spikeUserMapper.getById(id);
         }
 
-        String token = UUIDUtil.uuid();
-        addCookie(response, token, user);
+        public boolean login(HttpServletResponse response, LoginVo loginVo) {
+                if (loginVo == null) {
+                        throw new GlobalException(CodeMsg.SERVER_ERROR);
+                }
+                String inputPass = loginVo.getPassword();
+                String mobile = loginVo.getMobile();
+                //判断手机号是否存在
+                SpikeUser user = getById(Long.valueOf(mobile));
+                if (user == null) {
+                        throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
+                }
+                //验证密码
+                String dbPass = user.getPassword();
+                String dbSalt = user.getSalt();
+                String calcPass = MD5Util.formPassToDBPass(inputPass, dbSalt);
+                if (!calcPass.equals(dbPass)) {
+                        throw new GlobalException(CodeMsg.PASSWORD_ERROR);
+                }
 
-        return true;
-    }
+                String token = UUIDUtil.uuid();
+                addCookie(response, token, user);
 
-    private void addCookie(HttpServletResponse response, String token, SpikeUser user) {
-        //生成Cookie，为了实现分布式Session
-        redisService.set(SpikeUserKey.spikeUserKey, token, user);
-        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(SpikeUserKey.spikeUserKey.expireSeconds());
-        cookie.setPath("/");
-        response.addCookie(cookie);
-    }
-
-    public SpikeUser getByToken(HttpServletResponse response, String token) {
-        if(StringUtils.isEmpty(token)) {
-            return null;
+                return true;
         }
-        //
-        SpikeUser spikeUser =  redisService.get(SpikeUserKey.spikeUserKey, token, SpikeUser.class);
-        //延长有效期
-        if(spikeUser != null) {
-            addCookie(response, token, spikeUser);
+
+        private void addCookie(HttpServletResponse response, String token, SpikeUser user) {
+                //生成Cookie，为了实现分布式Session
+                redisService.set(SpikeUserKey.spikeUserKey, token, user);
+                Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
+                cookie.setMaxAge(SpikeUserKey.spikeUserKey.expireSeconds());
+                cookie.setPath("/");
+                response.addCookie(cookie);
         }
-        return spikeUser;
-    }
+
+        public SpikeUser getByToken(HttpServletResponse response, String token) {
+                if (StringUtils.isEmpty(token)) {
+                        return null;
+                }
+                //
+                SpikeUser spikeUser = redisService.get(SpikeUserKey.spikeUserKey, token, SpikeUser.class);
+                //延长有效期
+                if (spikeUser != null) {
+                        addCookie(response, token, spikeUser);
+                }
+                return spikeUser;
+        }
 }

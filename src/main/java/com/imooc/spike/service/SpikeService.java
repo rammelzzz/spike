@@ -18,23 +18,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SpikeService {
 
-    @Autowired
-    private GoodsService goodsService;
-    @Autowired
-    private OrderService orderService;
+        @Autowired
+        private GoodsService goodsService;
+        @Autowired
+        private OrderService orderService;
 
-    /**
-     * //减库存 下订单 写入秒杀订单
-     * @param user
-     * @param goods
-     * @return
-     */
-    @Transactional
-    public OrderInfo spike(SpikeUser user, GoodsVo goods) {
-        //减库存
-        goodsService.reduceStock(goods);
-        //下订单 写入秒杀订单
-        return orderService.createOrder(user, goods);
-    }
+        /**
+         * //减库存 下订单 写入秒杀订单
+         *
+         * @param user
+         * @param goods
+         * @return
+         */
+        @Transactional
+        public OrderInfo spike(SpikeUser user, GoodsVo goods) {
+                //减库存
+                goodsService.reduceStock(goods);
+                //下订单 写入秒杀订单
+                return orderService.createOrder(user, goods);
+        }
 
 }

@@ -16,63 +16,63 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "spring.redis")
 public class RedisConfig {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+        private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private String host;
-    private int port;
-    private int poolMaxTotal;
-    private int poolMaxIdle;
-    private int poolMaxWait;
+        private String host;
+        private int port;
+        private int poolMaxTotal;
+        private int poolMaxIdle;
+        private int poolMaxWait;
 
-    public String getHost() {
-        return host;
-    }
+        public String getHost() {
+                return host;
+        }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
+        public void setHost(String host) {
+                this.host = host;
+        }
 
-    public int getPort() {
-        return port;
-    }
+        public int getPort() {
+                return port;
+        }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+        public void setPort(int port) {
+                this.port = port;
+        }
 
 
-    public int getPoolMaxTotal() {
-        return poolMaxTotal;
-    }
+        public int getPoolMaxTotal() {
+                return poolMaxTotal;
+        }
 
-    public void setPoolMaxTotal(int poolMaxTotal) {
-        this.poolMaxTotal = poolMaxTotal;
-    }
+        public void setPoolMaxTotal(int poolMaxTotal) {
+                this.poolMaxTotal = poolMaxTotal;
+        }
 
-    public int getPoolMaxIdle() {
-        return poolMaxIdle;
-    }
+        public int getPoolMaxIdle() {
+                return poolMaxIdle;
+        }
 
-    public void setPoolMaxIdle(int poolMaxIdle) {
-        this.poolMaxIdle = poolMaxIdle;
-    }
+        public void setPoolMaxIdle(int poolMaxIdle) {
+                this.poolMaxIdle = poolMaxIdle;
+        }
 
-    public int getPoolMaxWait() {
-        return poolMaxWait;
-    }
+        public int getPoolMaxWait() {
+                return poolMaxWait;
+        }
 
-    public void setPoolMaxWait(int poolMaxWait) {
-        this.poolMaxWait = poolMaxWait;
-    }
+        public void setPoolMaxWait(int poolMaxWait) {
+                this.poolMaxWait = poolMaxWait;
+        }
 
-    @Override
-    public String toString() {
-        return "RedisConfig{" +
-                "host='" + host + '\'' +
-                ", port=" + port +
-                ", poolMaxTotal=" + poolMaxTotal +
-                ", poolMaxIdle=" + poolMaxIdle +
-                ", poolMaxWait=" + poolMaxWait +
-                '}';
-    }
+        @Override
+        public String toString() {
+                return "RedisConfig{" +
+                        "host='" + host + '\'' +
+                        ", port=" + port +
+                        ", poolMaxTotal=" + poolMaxTotal +
+                        ", poolMaxIdle=" + poolMaxIdle +
+                        ", poolMaxWait=" + poolMaxWait +
+                        '}';
+        }
 }

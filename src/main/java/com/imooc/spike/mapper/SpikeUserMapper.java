@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface SpikeUserMapper {
 
-    @Select("select * from spike_user where id = #{id}")
-    public SpikeUser getById(long id);
+        @Select("select * from spike_user where id = #{id}")
+        public SpikeUser getById(long id);
 
 }

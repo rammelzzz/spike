@@ -14,23 +14,23 @@ import javax.validation.ConstraintValidatorContext;
  **/
 public class IsMobileValidator implements ConstraintValidator<IsMobile, String> {
 
-    private boolean required = false;
+        private boolean required = false;
 
-    @Override
-    public void initialize(IsMobile isMobile) {
-        required = isMobile.required();
-    }
-
-    @Override
-    public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        if(required) {
-            return ValidateUtil.isMobile(s);
-        } else {
-            if(StringUtils.isEmpty(s)) {
-                return true;
-            } else {
-                return ValidateUtil.isMobile(s);
-            }
+        @Override
+        public void initialize(IsMobile isMobile) {
+                required = isMobile.required();
         }
-    }
+
+        @Override
+        public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
+                if (required) {
+                        return ValidateUtil.isMobile(s);
+                } else {
+                        if (StringUtils.isEmpty(s)) {
+                                return true;
+                        } else {
+                                return ValidateUtil.isMobile(s);
+                        }
+                }
+        }
 }

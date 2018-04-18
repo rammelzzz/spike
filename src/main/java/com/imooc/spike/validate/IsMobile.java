@@ -18,11 +18,11 @@ import java.lang.annotation.*;
 )
 public @interface IsMobile {
 
-    boolean required() default true;
+        boolean required() default true;
 
-    String message() default "手机号码格式有误";
+        String message() default "手机号码格式有误";
 
-    Class<?>[] groups() default {};
+        Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+        Class<? extends Payload>[] payload() default {};
 }

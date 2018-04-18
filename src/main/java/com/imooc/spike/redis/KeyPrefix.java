@@ -8,8 +8,8 @@ package com.imooc.spike.redis;
  **/
 public interface KeyPrefix {
 
-    public int expireSeconds();
+        public int expireSeconds();
 
-    public String getPrefix();
+        public String getPrefix();
 
 }

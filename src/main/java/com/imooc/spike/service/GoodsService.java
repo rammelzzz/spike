@@ -18,21 +18,21 @@ import java.util.List;
 @Service
 public class GoodsService {
 
-    @Autowired
-    private GoodsMapper goodsMapper;
+        @Autowired
+        private GoodsMapper goodsMapper;
 
-    public List<GoodsVo> listGoodsVo() {
-        return goodsMapper.listGoodsVo();
-    }
+        public List<GoodsVo> listGoodsVo() {
+                return goodsMapper.listGoodsVo();
+        }
 
-    public GoodsVo getById(long goodsId) {
-        return goodsMapper.getById(goodsId);
-    }
+        public GoodsVo getById(long goodsId) {
+                return goodsMapper.getById(goodsId);
+        }
 
-    @Transactional
-    public void reduceStock(GoodsVo goods) {
-        SpikeGoods g = new SpikeGoods();
-        g.setGoodsId(goods.getId());
-        goodsMapper.reduceStock(g);
-    }
+        @Transactional
+        public void reduceStock(GoodsVo goods) {
+                SpikeGoods g = new SpikeGoods();
+                g.setGoodsId(goods.getId());
+                goodsMapper.reduceStock(g);
+        }
 }

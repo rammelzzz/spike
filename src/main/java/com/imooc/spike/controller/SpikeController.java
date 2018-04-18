@@ -25,37 +25,38 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/spike")
 public class SpikeController {
 
-    @Autowired
-    private GoodsService goodsService;
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private SpikeService spikeService;
+        @Autowired
+        private GoodsService goodsService;
+        @Autowired
+        private OrderService orderService;
+        @Autowired
+        private SpikeService spikeService;
 
-    @RequestMapping(value = "/do_spike", method = RequestMethod.POST)
-    public String spike(Model model, SpikeUser user,
-                        @RequestParam("goodsId") long goodsId) {
-        if(user == null) {
-            return "login";
+        //在高并发情况下可能会把库存减为负数
+        @RequestMapping(value = "/do_spike", method = RequestMethod.POST)
+        public String spike(Model model, SpikeUser user,
+                            @RequestParam("goodsId") long goodsId) {
+                if (user == null) {
+                        return "login";
+                }
+                model.addAttribute("user", user);
+                GoodsVo goods = goodsService.getById(goodsId);
+                int stock = goods.getGoodsStock();
+                if (stock <= 0) {
+                        model.addAttribute("error", CodeMsg.SPIKE_OVER.getMsg());
+                        return "miaosha_fail";
+                }
+                //判断是不是已经秒杀过
+                SpikeOrder order = orderService.getSpikeOrderByUserIdGoodsId(user.getId(), goodsId);
+                if (order != null) {
+                        model.addAttribute("error", CodeMsg.REPEAT_SPIKE);
+                        return "miaosha_fail";
+                }
+                //减库存 下订单 写入秒杀订单
+                OrderInfo orderInfo = spikeService.spike(user, goods);
+                model.addAttribute("orderInfo", orderInfo);
+                model.addAttribute("goods", goods);
+                return "order_detail";
         }
-        model.addAttribute("user", user);
-        GoodsVo goods = goodsService.getById(goodsId);
-        int stock = goods.getGoodsStock();
-        if(stock <= 0) {
-            model.addAttribute("error", CodeMsg.SPIKE_OVER.getMsg());
-            return "miaosha_fail";
-        }
-        //判断是不是已经秒杀过
-        SpikeOrder order = orderService.getSpikeOrderByUserIdGoodsId(user.getId(), goodsId);
-        if(order != null) {
-            model.addAttribute("error", CodeMsg.REPEAT_SPIKE);
-            return "miaosha_fail";
-        }
-        //减库存 下订单 写入秒杀订单
-        OrderInfo orderInfo = spikeService.spike(user, goods);
-        model.addAttribute("orderInfo", orderInfo);
-        model.addAttribute("goods", goods);
-        return "order_detail";
-    }
 
 }

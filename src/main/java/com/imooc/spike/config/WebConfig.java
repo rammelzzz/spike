@@ -14,15 +14,15 @@ import java.util.List;
  * @Modified By:
  **/
 @Configuration
-public class WebConfig extends WebMvcConfigurerAdapter{
+public class WebConfig extends WebMvcConfigurerAdapter {
 
 
-    @Autowired
-    private SpikeUserArgumentResolver userArgumentResolver;
+        @Autowired
+        private SpikeUserArgumentResolver userArgumentResolver;
 
-    //添加一个user的解析器,如果参数列表中有user则传入
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(userArgumentResolver);
-    }
+        //添加一个user的解析器,如果参数列表中有user则传入
+        @Override
+        public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+                argumentResolvers.add(userArgumentResolver);
+        }
 }

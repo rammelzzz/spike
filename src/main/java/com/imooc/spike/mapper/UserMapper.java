@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface UserMapper {
 
-    @Select("select * from user where id = #{id}")
-    public User getById(int id);
+        @Select("select * from user where id = #{id}")
+        public User getById(int id);
 
 }

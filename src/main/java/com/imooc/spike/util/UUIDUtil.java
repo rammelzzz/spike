@@ -9,7 +9,7 @@ import java.util.UUID;
  * @Modified By:
  **/
 public class UUIDUtil {
-    public static String uuid() {
-        return UUID.randomUUID().toString().replace("-", "");
-    }
+        public static String uuid() {
+                return UUID.randomUUID().toString().replace("-", "");
+        }
 }
