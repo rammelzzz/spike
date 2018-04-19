@@ -8,11 +8,12 @@ package com.imooc.spike.redis;
  **/
 public class SpikeUserKey extends BasePrefix {
 
-        private static final int TOKEN_EXPIRE = 3600 * 24 * 2;
+    private static final int TOKEN_EXPIRE = 3600 * 24 * 2;
 
-        public SpikeUserKey(int expireSeconds, String prefix) {
-                super(expireSeconds, prefix);
-        }
+    public SpikeUserKey(int expireSeconds, String prefix) {
+        super(expireSeconds, prefix);
+    }
 
-        public static SpikeUserKey spikeUserKey = new SpikeUserKey(TOKEN_EXPIRE, "token");
+    public static SpikeUserKey getById = new SpikeUserKey(TOKEN_EXPIRE, "gbi");
+    public static SpikeUserKey spikeUserKey = new SpikeUserKey(TOKEN_EXPIRE, "token");
 }
