@@ -11,6 +11,8 @@ import com.imooc.spike.util.MD5Util;
 import com.imooc.spike.util.UUIDUtil;
 import com.imooc.spike.vo.LoginVo;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.security.provider.MD5;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SpikeUserService {
 
     public static final String COOKIE_NAME_TOKEN = "token";
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private SpikeUserMapper spikeUserMapper;
@@ -38,11 +41,12 @@ public class SpikeUserService {
     public SpikeUser getById(long id) {
         SpikeUser user = redisService.get(SpikeUserKey.getById, "" + id, SpikeUser.class);
         if(user != null) {
+            log.info("成功从缓存获取用户!");
             return user;
         }
         user = spikeUserMapper.getById(id);
         //存缓存
-        redisService.set(SpikeUserKey.getById, "" + id, SpikeUser.class);
+        redisService.set(SpikeUserKey.getById, "" + id, user);
         return user;
     }
 

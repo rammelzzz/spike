@@ -7,8 +7,9 @@ package com.imooc.spike.redis;
  * @Modified By:
  **/
 public class OrderKey extends BasePrefix {
+    public OrderKey(String prefix) {
+        super(prefix);
+    }
 
-        public OrderKey(int expireSeconds, String prefix) {
-                super(expireSeconds, prefix);
-        }
+    public static OrderKey getSpikeOrderByUidGid = new OrderKey("gsobug");
 }

@@ -19,12 +19,12 @@ import java.util.List;
 @Mapper
 public interface GoodsMapper {
 
-        @Select("select g.*, mg.spike_price, mg.stock_count, mg.start_date, mg.end_date from spike_goods mg left join goods g on mg.goods_id = g.id")
-        public List<GoodsVo> listGoodsVo();
+    @Select("select g.*, mg.spike_price, mg.stock_count, mg.start_date, mg.end_date from spike_goods mg left join goods g on mg.goods_id = g.id")
+    List<GoodsVo> listGoodsVo();
 
-        @Select("select g.*, mg.spike_price, mg.stock_count, mg.start_date, mg.end_date from spike_goods mg left join goods g on mg.goods_id = g.id where g.id = #{goodsId}")
-        public GoodsVo getById(@Param("goodsId") long goodsId);
+    @Select("select g.*, mg.spike_price, mg.stock_count, mg.start_date, mg.end_date from spike_goods mg left join goods g on mg.goods_id = g.id where g.id = #{goodsId}")
+    GoodsVo getById(@Param("goodsId") long goodsId);
 
-        @Update("update spike_goods set stock_count = stock_count - 1 where goods_id = #{goodsId}")
-        public int reduceStock(SpikeGoods g);
+    @Update("update spike_goods set stock_count = stock_count - 1 where goods_id = #{goodsId} and stock_count > 0")
+    int reduceStock(SpikeGoods g);
 }

@@ -32,10 +32,10 @@ public class SpikeService {
          */
         @Transactional
         public OrderInfo spike(SpikeUser user, GoodsVo goods) {
-                //减库存
-                goodsService.reduceStock(goods);
-                //下订单 写入秒杀订单
-                return orderService.createOrder(user, goods);
+            //减库存
+            goodsService.reduceStock(goods);
+            //下订单 写入秒杀订单
+            return orderService.createOrder(user, goods);
         }
 
 }

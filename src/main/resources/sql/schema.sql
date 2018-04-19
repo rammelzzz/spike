@@ -62,3 +62,6 @@ insert into spike_goods VALUES
   (1, 1, 0.01, 4, '2018-04-16 00:00:00', '2018-05-01 00:00:00'),
   (2, 2, 0.01, 9, '2018-04-16 00:00:00', '2018-05-01 00:00:00');
 
+#避免重复秒杀
+create unique index u_uid_gid on spike_order(`user_id`, `goods_id`);
+

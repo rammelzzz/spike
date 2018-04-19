@@ -2,6 +2,8 @@ package com.imooc.spike.redis;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
@@ -19,6 +21,7 @@ public class RedisService {
 
     @Autowired
     private JedisPool jedisPool;
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * 获取单个对象
@@ -34,9 +37,10 @@ public class RedisService {
         try {
             jedis = jedisPool.getResource();
             String realKey = prefix.getPrefix() + ":" + key;
+//            log.info("realKey={}", realKey);
             String str = jedis.get(realKey);
-            T value = strToBean(str, clazz);
-            return value;
+//            log.info("str={}", str);
+            return strToBean(str, clazz);
         } finally {
             returnToPool(jedis);
         }

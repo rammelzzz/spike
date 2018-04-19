@@ -27,20 +27,20 @@ import javax.validation.Valid;
 @RequestMapping("/login")
 public class LoginController {
 
-        private Logger log = LoggerFactory.getLogger(getClass());
-        @Autowired
-        private SpikeUserService spikeUserService;
+    private Logger log = LoggerFactory.getLogger(getClass());
+    @Autowired
+    private SpikeUserService spikeUserService;
 
-        @RequestMapping(value = "/to_login", method = RequestMethod.GET)
-        public String toLogin() {
-                return "login";
-        }
+    @RequestMapping(value = "/to_login", method = RequestMethod.GET)
+    public String toLogin() {
+        return "login";
+    }
 
-        @RequestMapping(value = "/do_login", method = RequestMethod.POST)
-        @ResponseBody
-        public Result doLogin(@Valid LoginVo loginVo, HttpServletResponse response) {
-                log.info(loginVo.toString());
-                //参数校验
+    @RequestMapping(value = "/do_login", method = RequestMethod.POST)
+    @ResponseBody
+    public Result doLogin(@Valid LoginVo loginVo, HttpServletResponse response) {
+        log.info(loginVo.toString());
+        //参数校验
 //        String inputPass = loginVo.getPassword();
 //        String mobile = loginVo.getMobile();
 //        if(StringUtils.isEmpty(inputPass)) {
@@ -52,10 +52,10 @@ public class LoginController {
 //        if(!ValidateUtil.isMobile(mobile)) {
 //            return Result.error(CodeMsg.MOBILE_ERROR);
 //        }
-                //出现的业务异常已经被GlobalExceptionHandler捕获并处理，因此这里不关心结果如何
-                //因为如果代码能进行到下一步那么结果必然是true
-                spikeUserService.login(response, loginVo);
-                return Result.success(true);
-        }
+        //出现的业务异常已经被GlobalExceptionHandler捕获并处理，因此这里不关心结果如何
+        //因为如果代码能进行到下一步那么结果必然是true
+        spikeUserService.login(response, loginVo);
+        return Result.success(true);
+    }
 
 }
