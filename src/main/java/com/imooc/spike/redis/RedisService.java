@@ -43,7 +43,7 @@ public class RedisService {
             if(StringUtils.isEmpty(str)) {
                 return null;
             }
-            log.info("str={}", str);
+//            log.info("str={}", str);
             return strToBean(str, clazz);
         } finally {
             returnToPool(jedis);

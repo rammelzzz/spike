@@ -1,29 +1,34 @@
 package com.imooc.spike.controller;
 
+import com.imooc.spike.access.AccessLimit;
 import com.imooc.spike.domain.OrderInfo;
 import com.imooc.spike.domain.SpikeOrder;
 import com.imooc.spike.domain.SpikeUser;
 import com.imooc.spike.rabbitmq.MQSender;
 import com.imooc.spike.rabbitmq.SpikeMessage;
+import com.imooc.spike.redis.AccessKey;
 import com.imooc.spike.redis.GoodsKey;
 import com.imooc.spike.redis.RedisService;
+import com.imooc.spike.redis.SpikeGoodsKey;
 import com.imooc.spike.result.CodeMsg;
 import com.imooc.spike.result.Result;
 import com.imooc.spike.service.GoodsService;
 import com.imooc.spike.service.OrderService;
 import com.imooc.spike.service.SpikeService;
+import com.imooc.spike.util.MD5Util;
+import com.imooc.spike.util.UUIDUtil;
 import com.imooc.spike.vo.GoodsVo;
+import com.rabbitmq.client.AMQP;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.List;
@@ -89,17 +94,23 @@ public class SpikeController implements InitializingBean{
      * get幂等 <a href="/delete?id=xxx"></a> 这里就是严重的错误
      * post提交变化
      * <pre>同步下單->異步下單</pre>
-     * @param model
      * @param user
      * @param goodsId
      * @return
      */
-    @RequestMapping(value = "/do_spike", method = RequestMethod.POST)
+    @AccessLimit(seconds = 5, maxCount = 3)
+    @RequestMapping(value = "/{path}/do_spike", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Integer> spike(Model model, SpikeUser user,
-                        @RequestParam("goodsId") long goodsId) {
+    public Result<Integer> spike(SpikeUser user,
+                                 @RequestParam("goodsId") long goodsId,
+                                 @PathVariable("path") String path) {
         if (user == null) {
             return Result.error(CodeMsg.SERVER_ERROR);
+        }
+        //驗證path
+        boolean check = spikeService.checkPath(user, goodsId, path);
+        if(!check) {
+            return Result.error(CodeMsg.REQUEST_ILLEGAL);
         }
         /*
         //判斷庫存
@@ -125,17 +136,18 @@ public class SpikeController implements InitializingBean{
             return Result.error(CodeMsg.SPIKE_OVER);
         }
 
-        //Redis優化秒殺
-        long stock = redisService.decr(GoodsKey.getSpikeGoodsStock, "" + goodsId);
-        if(stock < 0) {
-            localOverMap.put(goodsId, true);
-            return Result.error(CodeMsg.SPIKE_OVER);
-        }
         //判断是不是已经秒杀过
         //這裏已經優化過，從Redis中拿到這個秒殺商品對象
         SpikeOrder order = orderService.getSpikeOrderByUserIdGoodsId(user.getId(), goodsId);//n個請求之後就會一直減成負數
         if (order != null) {
             return Result.error(CodeMsg.REPEAT_SPIKE);
+        }
+
+        //Redis優化秒殺
+        long stock = redisService.decr(GoodsKey.getSpikeGoodsStock, "" + goodsId);
+        if(stock < 0) {
+            localOverMap.put(goodsId, true);
+            return Result.error(CodeMsg.SPIKE_OVER);
         }
         //RabbitMQ異步下單
         SpikeMessage message = new SpikeMessage();
@@ -181,5 +193,16 @@ public class SpikeController implements InitializingBean{
         }
         long result = spikeService.getSpikeResult(user.getId(), goodsId);
         return Result.success(result);
+    }
+
+    @RequestMapping(value = "/path", method = RequestMethod.GET)
+    @ResponseBody
+    public Result<String> getSpikePath(Model model, SpikeUser user,
+                                    @RequestParam("goodsId") long goodsId) {
+        if(user == null) {
+            return Result.error(CodeMsg.SERVER_ERROR);
+        }
+        String str = spikeService.createPath(user, goodsId);
+        return Result.success(str);
     }
 }

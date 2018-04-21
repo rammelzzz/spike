@@ -1,5 +1,6 @@
 package com.imooc.spike.config;
 
+import com.imooc.spike.access.UserContext;
 import com.imooc.spike.domain.SpikeUser;
 import com.imooc.spike.service.SpikeUserService;
 import org.apache.commons.lang3.StringUtils;
@@ -24,47 +25,49 @@ import javax.servlet.http.HttpServletResponse;
 @Service
 public class SpikeUserArgumentResolver implements HandlerMethodArgumentResolver {
 
-        @Autowired
-        private SpikeUserService userService;
+    @Autowired
+    private SpikeUserService userService;
 
-        @Override
-        public boolean supportsParameter(MethodParameter methodParameter) {
-                Class<?> clz = methodParameter.getParameterType();
-                return SpikeUser.class == clz;
-        }
+    @Override
+    public boolean supportsParameter(MethodParameter methodParameter) {
+        Class<?> clz = methodParameter.getParameterType();
+        return SpikeUser.class == clz;
+    }
 
-        /**
-         * 如果参数列表中含有SpikeUser,那么使用这个装配器来装配它
-         *
-         * @param methodParameter
-         * @param modelAndViewContainer
-         * @param nativeWebRequest
-         * @param webDataBinderFactory
-         * @return
-         * @throws Exception
-         */
-        @Override
-        public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
-                HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
-                HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
+    /**
+     * 如果参数列表中含有SpikeUser,那么使用这个装配器来装配它
+     *
+     * @param methodParameter
+     * @param modelAndViewContainer
+     * @param nativeWebRequest
+     * @param webDataBinderFactory
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
+//        HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
+//        HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
+//
+//        String paramToken = request.getParameter(SpikeUserService.COOKIE_NAME_TOKEN);
+//        String cookieToken = getCookieValue(request, SpikeUserService.COOKIE_NAME_TOKEN);
+//
+//        if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
+//            return "login";
+//        }
+//        String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
+//        return userService.getByToken(response, token);
+        //直接从ThreadLocal里取出来
+        return UserContext.getUser();
+    }
 
-                String paramToken = request.getParameter(SpikeUserService.COOKIE_NAME_TOKEN);
-                String cookieToken = getCookieValue(request, SpikeUserService.COOKIE_NAME_TOKEN);
-
-                if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
-                        return "login";
-                }
-                String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
-                return userService.getByToken(response, token);
-        }
-
-        public String getCookieValue(HttpServletRequest request, String cookieName) {
-                Cookie[] cookies = request.getCookies();
-                for (Cookie cookie : cookies) {
-                        if (cookie.getName().equals(cookieName)) {
-                                return cookie.getValue();
-                        }
-                }
-                return null;
-        }
+//    public String getCookieValue(HttpServletRequest request, String cookieName) {
+//        Cookie[] cookies = request.getCookies();
+//        for (Cookie cookie : cookies) {
+//            if (cookie.getName().equals(cookieName)) {
+//                return cookie.getValue();
+//            }
+//        }
+//        return null;
+//    }
 }

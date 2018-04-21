@@ -8,9 +8,10 @@ package com.imooc.spike.redis;
  **/
 public class SpikeGoodsKey extends BasePrefix {
 
-    public SpikeGoodsKey(String prefix) {
-        super(prefix);
+    public SpikeGoodsKey(int expireSeconds, String prefix) {
+        super(expireSeconds, prefix);
     }
 
-    public static SpikeGoodsKey isGoodsOver = new SpikeGoodsKey("igo");
+    public static SpikeGoodsKey isGoodsOver = new SpikeGoodsKey(0, "igo");
+    public static SpikeGoodsKey getSpikePath = new SpikeGoodsKey(60, "gsp");
 }

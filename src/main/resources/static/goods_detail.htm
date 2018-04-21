@@ -80,7 +80,8 @@
             },
             success : function(data) {
                 if(data.code == 0) {
-
+                    var path = data.data;
+                    doMiaosha(path);
                 } else {
 
                 }
@@ -88,9 +89,9 @@
         })
     }
 
-    function doMiaosha(){
+    function doMiaosha(path){
         $.ajax({
-            url:"/spike/do_spike",
+            url:"/spike/" + path +"/do_spike",
             type:"POST",
             data:{
                 goodsId:$("#goodsId").val(),
@@ -126,7 +127,7 @@
                     } else if(result == 0) { //繼續輪詢
                         setTimeout(function() {
                             getSpikeResult(goodsId);
-                        }, 50);
+                        }, 200);
                     } else {
                         layer.confirm("恭喜你，秒殺成蟲！查看訂單？",{btn:["確定", "取消"]},
                         function() {

@@ -17,9 +17,12 @@ public class CodeMsg {
     }
 
     //通用code begin
+    public static CodeMsg REQUEST_ILLEGAL = new CodeMsg(500102, "請求非法!");
     public static CodeMsg SUCCESS = new CodeMsg(0, "success");
     public static CodeMsg SERVER_ERROR = new CodeMsg(500100, "server error");
     public static CodeMsg BIND_ERROR = new CodeMsg(500101, "参数校验错误, %s");
+    public static CodeMsg ACCESS_LIMIT = new CodeMsg(500103, "請求過於頻繁!");
+    public static CodeMsg SESSION_ERROR = new CodeMsg(500104, "需要登录!");
     //通用code end
 
     //用户模块code begin

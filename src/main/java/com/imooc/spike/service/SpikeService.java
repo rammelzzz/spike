@@ -7,7 +7,10 @@ import com.imooc.spike.domain.SpikeUser;
 import com.imooc.spike.mapper.GoodsMapper;
 import com.imooc.spike.redis.RedisService;
 import com.imooc.spike.redis.SpikeGoodsKey;
+import com.imooc.spike.util.MD5Util;
+import com.imooc.spike.util.UUIDUtil;
 import com.imooc.spike.vo.GoodsVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,5 +70,22 @@ public class SpikeService {
                 return 0;
             }
         }
+    }
+
+    public boolean checkPath(SpikeUser user, long goodsId, String path) {
+        if(user == null || path == null) {
+            return false;
+        }
+        String value = redisService.get(SpikeGoodsKey.getSpikePath, user.getId() + "_" + goodsId, String.class);
+        if(StringUtils.isEmpty(value)) {
+            return false;
+        }
+        return !StringUtils.isEmpty(value) && value.equals(path);
+    }
+
+    public String createPath(SpikeUser user, long goodsId) {
+        String str = MD5Util.md5(UUIDUtil.uuid() + "123456");
+        redisService.set(SpikeGoodsKey.getSpikePath, user.getId() + "_" + goodsId, str);
+        return str;
     }
 }
