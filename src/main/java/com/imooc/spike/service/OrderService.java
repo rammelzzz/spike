@@ -38,6 +38,7 @@ public class OrderService {
 
     @Transactional
     public OrderInfo createOrder(SpikeUser user, GoodsVo goods) {
+        //插入訂單
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setCreateDate(new Date());
         orderInfo.setDeliveryAddrId(0L);
@@ -48,13 +49,16 @@ public class OrderService {
         orderInfo.setOrderChannel(1);
         orderInfo.setStatus(0);
         orderInfo.setUserId(user.getId());
-        long orderId = orderMapper.insertOrderInfo(orderInfo);
+        orderMapper.insertOrderInfo(orderInfo);
+        //插入秒殺訂單
         SpikeOrder spikeOrder = new SpikeOrder();
         spikeOrder.setGoodsId(goods.getId());
-        spikeOrder.setOrderId(orderId);
+        spikeOrder.setOrderId(orderInfo.getId());
         spikeOrder.setUserId(user.getId());
         orderMapper.insertSpikeOrder(spikeOrder);
-        redisService.set(OrderKey.getSpikeOrderByUidGid, "" + user.getId() + ":" + goods.getId(), SpikeOrder.class);
+        //訂單寫入Redis
+        redisService.set(OrderKey.getSpikeOrderByUidGid, "" + user.getId() + ":" + goods.getId(), spikeOrder);
+
         return orderInfo;
     }
 

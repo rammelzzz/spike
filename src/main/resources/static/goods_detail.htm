@@ -48,7 +48,7 @@
                         <button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>
                         <input type="hidden" name="goodsId"  id="goodsId" />
                     </form>-->
-                <button class="btn btn-primary btn-block" type="button" id="buyButton"onclick="doMiaosha()">立即秒杀</button>
+                <button class="btn btn-primary btn-block" type="button" id="buyButton"onclick="getSpikePath()">立即秒杀</button>
                 <input type="hidden" name="goodsId"  id="goodsId" />
             </td>
         </tr>
@@ -69,6 +69,25 @@
 </body>
 <script>
 
+    function getSpikePath() {
+        var goodsId = $("#goodsId").val();
+        g_showLoading();
+        $.ajax({
+            url : "/spike/path",
+            type : "get",
+            data : {
+                goodsId : goodsId
+            },
+            success : function(data) {
+                if(data.code == 0) {
+
+                } else {
+
+                }
+            }
+        })
+    }
+
     function doMiaosha(){
         $.ajax({
             url:"/spike/do_spike",
@@ -78,7 +97,8 @@
             },
             success:function(data){
                 if(data.code == 0){
-                    window.location.href="/order_detail.htm?orderId="+data.data.id;
+                    // window.location.href="/order_detail.htm?orderId="+data.data.id;
+                    getSpikeResult($("#goodsId").val());
                 }else{
                     layer.msg(data.msg);
                 }
@@ -88,6 +108,42 @@
             }
         });
 
+    }
+
+    function getSpikeResult(goodsId) {
+        g_showLoading();
+        $.ajax({
+            url:"/spike/result",
+            type:"get",
+            data:{
+                goodsId:$("#goodsId").val(),
+            },
+            success:function(data){
+                if(data.code == 0){
+                    var result = data.data;
+                    if(result < 0) {
+                        layer.msg("對不起秒殺失敗!")
+                    } else if(result == 0) { //繼續輪詢
+                        setTimeout(function() {
+                            getSpikeResult(goodsId);
+                        }, 50);
+                    } else {
+                        layer.confirm("恭喜你，秒殺成蟲！查看訂單？",{btn:["確定", "取消"]},
+                        function() {
+                            window.location.href="/order_detail.htm?orderId=" + result;
+                        },
+                        function() {
+                            layer.closeAll();
+                        });
+                    }
+                }else{
+                    layer.msg(data.msg);
+                }
+            },
+            error:function(){
+                layer.msg("客户端请求有误");
+            }
+        });
     }
 
     function render(detail){

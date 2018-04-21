@@ -17,6 +17,7 @@ import java.util.Map;
 @Configuration
 public class MQConfig {
 
+    public static final String SPIKE_QUEUE = "spike.queue";
     public static final String QUEUE = "queue";
     public static final String TOP_QUEUE_1 = "topic.queue.1";
     public static final String TOP_QUEUE_2 = "topic.queue.2";
@@ -99,5 +100,14 @@ public class MQConfig {
         map.put("header1", "value1");
         map.put("header2", "value2");
         return BindingBuilder.bind(headersQueue()).to(headersExchange()).whereAll(map).match();
+    }
+
+    /**
+     * 秒殺消息隊列
+     * @return
+     */
+    @Bean
+    public Queue spikeQueue() {
+        return new Queue(SPIKE_QUEUE, true);
     }
 }

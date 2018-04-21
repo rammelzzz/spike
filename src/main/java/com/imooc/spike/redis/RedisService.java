@@ -1,6 +1,7 @@
 package com.imooc.spike.redis;
 
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,10 @@ public class RedisService {
             String realKey = prefix.getPrefix() + ":" + key;
 //            log.info("realKey={}", realKey);
             String str = jedis.get(realKey);
-//            log.info("str={}", str);
+            if(StringUtils.isEmpty(str)) {
+                return null;
+            }
+            log.info("str={}", str);
             return strToBean(str, clazz);
         } finally {
             returnToPool(jedis);

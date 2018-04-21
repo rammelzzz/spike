@@ -97,64 +97,64 @@ public class GoodsController {
     }
 
 
-    /**
-     * 重构代码，加入页面缓存
-     * @param model
-     * @param user
-     * @param goodsId
-     * @return
-     */
-    @RequestMapping("/to_detail2/{goodsId}")
-    @ResponseBody
-    public String detail2(Model model, SpikeUser user,
-                         HttpServletRequest request,
-                         HttpServletResponse response,
-                         @PathVariable("goodsId") long goodsId) {
-
-        //返回缓存 begin
-        String html = redisService.get(GoodsKey.getGoodsList, String.valueOf(goodsId), String.class);
-        if(!StringUtils.isEmpty(html)) {
-            return html;
-        }
-        //缓存 end
-        model.addAttribute("user", user);
-        GoodsVo goods = goodsService.getById(goodsId);
-        model.addAttribute("goods", goods);
-
-        //判断秒杀是否开启
-        long startAt = goods.getStartDate().getTime();
-        long endAt = goods.getEndDate().getTime();
-        long now = System.currentTimeMillis();
-
-        int spikeStatus;
-        int remainSeconds;
-
-        if (now < startAt) { //秒杀没有开启，倒计时
-            spikeStatus = 0;
-            remainSeconds = (int) ((startAt - now) / 1000);
-        } else if (now > endAt) { //秒杀已经结束
-            spikeStatus = 2;
-            remainSeconds = -1;
-        } else {  //秒杀进行中
-            spikeStatus = 1;
-            remainSeconds = 0;
-        }
-        model.addAttribute("spikeStatus", spikeStatus);
-        model.addAttribute("remainSeconds", remainSeconds);
-//        return "goods_detail";
-        //手动渲染
-        SpringWebContext ctx = new SpringWebContext(request,
-                response,
-                request.getServletContext(),
-                request.getLocale(),
-                model.asMap(),
-                applicationContext);
-        html = thymeleafViewResolver.getTemplateEngine().process("goods_detail", ctx);
-        if(!StringUtils.isEmpty(html)) {
-            redisService.set(GoodsKey.getGoodsList, String.valueOf(goodsId), html);
-        }
-        return html;
-    }
+//    /**
+//     * 重构代码，加入页面缓存
+//     * @param model
+//     * @param user
+//     * @param goodsId
+//     * @return
+//     */
+//    @RequestMapping("/to_detail2/{goodsId}")
+//    @ResponseBody
+//    public String detail2(Model model, SpikeUser user,
+//                         HttpServletRequest request,
+//                         HttpServletResponse response,
+//                         @PathVariable("goodsId") long goodsId) {
+//
+//        //返回缓存 begin
+//        String html = redisService.get(GoodsKey.getGoodsList, String.valueOf(goodsId), String.class);
+//        if(!StringUtils.isEmpty(html)) {
+//            return html;
+//        }
+//        //缓存 end
+//        model.addAttribute("user", user);
+//        GoodsVo goods = goodsService.getById(goodsId);
+//        model.addAttribute("goods", goods);
+//
+//        //判断秒杀是否开启
+//        long startAt = goods.getStartDate().getTime();
+//        long endAt = goods.getEndDate().getTime();
+//        long now = System.currentTimeMillis();
+//
+//        int spikeStatus;
+//        int remainSeconds;
+//
+//        if (now < startAt) { //秒杀没有开启，倒计时
+//            spikeStatus = 0;
+//            remainSeconds = (int) ((startAt - now) / 1000);
+//        } else if (now > endAt) { //秒杀已经结束
+//            spikeStatus = 2;
+//            remainSeconds = -1;
+//        } else {  //秒杀进行中
+//            spikeStatus = 1;
+//            remainSeconds = 0;
+//        }
+//        model.addAttribute("spikeStatus", spikeStatus);
+//        model.addAttribute("remainSeconds", remainSeconds);
+////        return "goods_detail";
+//        //手动渲染
+//        SpringWebContext ctx = new SpringWebContext(request,
+//                response,
+//                request.getServletContext(),
+//                request.getLocale(),
+//                model.asMap(),
+//                applicationContext);
+//        html = thymeleafViewResolver.getTemplateEngine().process("goods_detail", ctx);
+//        if(!StringUtils.isEmpty(html)) {
+//            redisService.set(GoodsKey.getGoodsDetail, String.valueOf(goodsId), html);
+//        }
+//        return html;
+//    }
 
     /**
      * 第三次重构代码，前后端分离，页面静态化

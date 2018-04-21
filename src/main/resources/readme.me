@@ -30,4 +30,14 @@ rabbitmq的四種交換機模式
 1.Direct模式 only one queue
 2.Topic模式 主題訂閱模式
 3.Fanout模式 廣播模式
-4.Header模式
+4.Header模式 消息入隊必須帶上一些Headers
+
+安全優化
+1.秒殺接口地址隱藏
+2.數學公式驗證碼
+3.接口限流防刷
+
+秒殺開始之前，先去請求接口獲取秒殺地址
+1.接口改造，帶上PathVariable參數
+2.添加生成地址的接口
+3.秒殺收到請求，先驗證PathVariable

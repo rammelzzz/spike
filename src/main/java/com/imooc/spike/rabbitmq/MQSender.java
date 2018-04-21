@@ -23,6 +23,8 @@ public class MQSender {
     @Autowired
     private AmqpTemplate amqpTemplate;
 
+    /* rabbitmq測試begin */
+
     public void send(Object message) {
         String msg = RedisService.beanToStr(message);
         log.info("send msg = {}", msg);
@@ -52,5 +54,13 @@ public class MQSender {
         Message message = new Message(msg.getBytes(), properties);
         amqpTemplate.convertAndSend(MQConfig.HEADERS_EXCHANGE, "", message);
     }
+    /* rabbitmq測試end */
+
+    public void sendSpikeMessage(SpikeMessage spikeMessage) {
+        String msg = RedisService.beanToStr(spikeMessage);
+        log.info("send Message : {}" + spikeMessage);
+        amqpTemplate.convertAndSend(MQConfig.SPIKE_QUEUE, msg);
+    }
+
 
 }
